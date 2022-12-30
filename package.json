@@ -1,0 +1,25 @@
+{
+  "name": "razerbatterytaskbar",
+  "version": "1.0.0",
+  "main": "src/main.js",
+  "author": "Tyler Dougherty",
+  "license": "ISC",
+  "description": "Razer battery life for Basilisk Ultimate",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.0",
+    "usb": "^2.6.0"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.4",
+    "@electron-forge/maker-deb": "^6.0.4",
+    "@electron-forge/maker-rpm": "^6.0.4",
+    "@electron-forge/maker-squirrel": "^6.0.4",
+    "@electron-forge/maker-zip": "^6.0.4",
+    "electron": "^22.0.0"
+  }
+}

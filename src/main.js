@@ -1,6 +1,3 @@
-// Much of this code is adapted from other works, credit below
-// OpenRazer https://github.com/openrazer/openrazer
-// Hsutungyu https://github.com/hsutungyu/razer-mouse-battery-windows
 var {
     WebUSB
 } = require('usb');

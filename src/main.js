@@ -79,7 +79,11 @@ const RazerProducts = {
         wireless: true
     },
     0x00A7: {
-        name: 'Razer Naga v2 Pro',
+        name: 'Razer Naga v2 Pro Wired',
+        wireless: true
+    },
+    0x00A8: {
+        name: 'Razer Naga v2 Pro Wireless',
         wireless: true
     },
 };

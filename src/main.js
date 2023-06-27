@@ -5,7 +5,8 @@ const {
     app,
     Tray,
     Menu,
-    nativeImage
+    nativeImage,
+    Notification
 } = require('electron');
 if (require('electron-squirrel-startup')) app.quit();
 const path = require('path');
@@ -76,7 +77,11 @@ const RazerProducts = {
     0x0086: {
         name: 'Razer Basilisk Ultimate',
         wireless: true
-    }
+    },
+    0x00A7: {
+        name: 'Razer Naga v2 Pro',
+        wireless: true
+    },
 };
 function GetMessage() {
     // Function that creates and returns the message to be sent to the device
@@ -98,7 +103,11 @@ function GetMessage() {
 async function GetMouse() {
     const customWebUSB = new WebUSB({
         // This function can return a promise which allows a UI to be displayed if required
-        devicesFound: devices => devices.find(device => device.vendorId == RazerVendorId && RazerProducts[device.productId] != undefined)
+        devicesFound: devices => {
+            // let dStr = devices.reduce((acc, d) => acc += `${d.productId}||${d.productName}\r\n`,'')
+            // new Notification({title: 'Info', body: dStr}).show()
+            return devices.find(device => RazerVendorId && RazerProducts[device.productId] != undefined)
+        }
     });
 
     // Returns device based on injected 'devicesFound' function

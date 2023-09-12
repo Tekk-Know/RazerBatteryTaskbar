@@ -8,3 +8,5 @@ Much of this code is adapted from other works, credit below:
 
 ## Supported Hardware
 * Basilisk (Wireless, Plugged in)
+* Razer Basilsk X HyperSpeed
+* Razer Naga v2 Pro (non-BT)

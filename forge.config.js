@@ -1,6 +1,6 @@
 module.exports = {
   packagerConfig: {
-    icon: 'src/assets/bat_4.png'
+    icon: 'src/assets/battery_90.png'
   },
   rebuildConfig: {},
   makers: [

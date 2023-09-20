@@ -6,7 +6,13 @@ Much of this code is adapted from other works, credit below:
 * OpenRazer https://github.com/openrazer/openrazer
 * Hsutungyu https://github.com/hsutungyu/razer-mouse-battery-windows
 
-## Supported Hardware
-* Basilisk (Wireless, Plugged in)
-* Razer Basilsk X HyperSpeed
-* Razer Naga v2 Pro (non-BT)
+## Supported Hardware (USB Only - no Bluetooth)
+* Basilisk
+* Basilisk X HyperSpeed
+* Naga v2 Pro (non-BT)
+* DeathAdder V2 Pro
+* DeathAdder V2 X Hyperspeed
+* DeathAdder V3 Pro
+
+## Transaction IDs
+* https://github.com/openrazer/openrazer/blob/master/driver/razermouse_driver.c

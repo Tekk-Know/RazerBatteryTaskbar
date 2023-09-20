@@ -47,19 +47,8 @@ function SetTrayDetails(tray) {
 
 function GetBatteryIconPath(val) {
     let iconName;
-    if (val >= 80) {
-        iconName = 'bat_5.png';
-    } else if (val >= 60) {
-        iconName = 'bat_4.png';
-    } else if (val >= 40) {
-        iconName = 'bat_3.png';
-    } else if (val >= 20) {
-        iconName = 'bat_2.png';
-    } else {
-        iconName = 'bat_1.png';
-    }
-
-    return `src/assets/${iconName}`;
+    iconName = Math.floor(7/10) * 10;
+    return `src/assets/battery_${iconName}.png`;
 }
 
 function QuitClick() {
@@ -69,33 +58,72 @@ function QuitClick() {
 
 // mouse stuff
 const RazerVendorId = 0x1532;
-const TransactionId = 0x1f
 const RazerProducts = {
+    0x00AA: {
+        name: 'Razer Basilisk V3 Pro',
+        wireless: true,
+        transactionId: 0x1f
+    },
+    0x00AB: {
+        name: 'Razer Basilisk V3 Pro',
+        wireless: false,
+        transactionId: 0x1f
+    },
+    0x007C: {
+        name: "Razer DeathAdder V2 Pro Wired",
+        wireless: false,
+        transactionId: 0x3f
+    },
+    0x007D: {
+        name: "Razer DeathAdder V2 Pro Wireless",
+        wireless: true,
+        transactionId: 0x3f
+    },
+    0x009C: {
+        name: "Razer DeathAdder V2 X HyperSpeed",
+        wireless: true,
+        transactionId: 0x1f
+    },
+    0x00B6: {
+        name: 'Razer Deathadder V3 Pro Wired',
+        wireless: true,
+        transactionId: 0x1f
+    },
+    0x00B7: {
+        name: 'Razer Deathadder V3 Pro Wireless',
+        wireless: true,
+        transactionId: 0x1f
+    },
     0x0083: {
         name: "Razer Basilsk X HyperSpeed",
-        wireless: true
+        wireless: true,
+        transactionId: 0x1f
     },
     0x0086: {
         name: "Razer Basilisk Ultimate",
-        wireless: true
+        wireless: true,
+        transactionId: 0x1f
     },
     0x0088: {
         name: "Razer Basilisk Ultimate Dongle",
-        wireless: true
+        wireless: true,
+        transactionId: 0x1f
     },
-    0x00A7: {
+    0x008F: {
         name: 'Razer Naga v2 Pro Wired',
-        wireless: false
+        wireless: false,
+        transactionId: 0x1f
     },
-    0x00A8: {
+    0x0090: {
         name: 'Razer Naga v2 Pro Wireless',
-        wireless: true
-    },
+        wireless: true,
+        transactionId: 0x1f
+    }
 };
 
-function GetMessage() {
+function GetMessage(mouse) {
     // Function that creates and returns the message to be sent to the device
-    let msg = Buffer.from([0x00, TransactionId, 0x00, 0x00, 0x00, 0x02, 0x07, 0x80]);
+    let msg = Buffer.from([0x00, mouse.transactionId, 0x00, 0x00, 0x00, 0x02, 0x07, 0x80]);
     let crc = 0;
 
     for (let i = 2; i < msg.length; i++) {
@@ -135,7 +163,7 @@ async function GetBattery() {
     try {
         const mouse = await GetMouse();
 
-        const msg = GetMessage();
+        const msg = GetMessage(mouse);
 
         await mouse.open();
 

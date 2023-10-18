@@ -16,7 +16,7 @@ let tray;
 let batteryCheckInterval;
 
 app.whenReady().then(() => {
-    const icon = nativeImage.createFromPath(path.join(rootPath, 'src/assets/bat_5.png'));
+    const icon = nativeImage.createFromPath(path.join(rootPath, 'src/assets/battery_0.png'));
     tray = new Tray(icon);
 
     const contextMenu = Menu.buildFromTemplate([
@@ -30,18 +30,18 @@ app.whenReady().then(() => {
     SetTrayDetails(tray);
 
     tray.setContextMenu(contextMenu);
-    tray.setToolTip('?');
-    tray.setTitle('Razer Battery Life');
+    tray.setToolTip('Searching for device');
+    tray.setTitle('Razer battery life');
 })
 
 function SetTrayDetails(tray) {
     GetBattery().then(battLife => {
-        if (battLife === 0) return;
+        if (battLife === 0 || battLife === undefined) return;
 
         let assetPath = GetBatteryIconPath(battLife);
 
         tray.setImage(nativeImage.createFromPath(path.join(rootPath, assetPath)));
-        tray.setToolTip(battLife + '%');
+        tray.setToolTip(battLife == 0 ? "Device disconnected" : battLife + '%');
     });
 }
 
@@ -61,62 +61,54 @@ const RazerVendorId = 0x1532;
 const RazerProducts = {
     0x00AA: {
         name: 'Razer Basilisk V3 Pro',
-        wireless: true,
         transactionId: 0x1f
     },
     0x00AB: {
         name: 'Razer Basilisk V3 Pro',
-        wireless: false,
         transactionId: 0x1f
     },
     0x007C: {
         name: "Razer DeathAdder V2 Pro Wired",
-        wireless: false,
         transactionId: 0x3f
     },
     0x007D: {
         name: "Razer DeathAdder V2 Pro Wireless",
-        wireless: true,
         transactionId: 0x3f
     },
     0x009C: {
         name: "Razer DeathAdder V2 X HyperSpeed",
-        wireless: true,
+        transactionId: 0x1f
+    },
+    0x00B3: {
+        name: 'Razer Hyperpolling Wireless Dongle',
         transactionId: 0x1f
     },
     0x00B6: {
         name: 'Razer Deathadder V3 Pro Wired',
-        wireless: true,
         transactionId: 0x1f
     },
     0x00B7: {
         name: 'Razer Deathadder V3 Pro Wireless',
-        wireless: true,
         transactionId: 0x1f
     },
     0x0083: {
         name: "Razer Basilsk X HyperSpeed",
-        wireless: true,
         transactionId: 0x1f
     },
     0x0086: {
         name: "Razer Basilisk Ultimate",
-        wireless: true,
         transactionId: 0x1f
     },
     0x0088: {
         name: "Razer Basilisk Ultimate Dongle",
-        wireless: true,
         transactionId: 0x1f
     },
     0x008F: {
         name: 'Razer Naga v2 Pro Wired',
-        wireless: false,
         transactionId: 0x1f
     },
     0x0090: {
         name: 'Razer Naga v2 Pro Wireless',
-        wireless: true,
         transactionId: 0x1f
     }
 };

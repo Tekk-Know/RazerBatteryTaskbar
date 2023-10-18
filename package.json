@@ -1,10 +1,10 @@
 {
   "name": "razerbatterytaskbar",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "src/main.js",
   "author": "Tyler Dougherty",
   "license": "ISC",
-  "description": "Razer battery life for Basilisk Ultimate",
+  "description": "Razer battery life",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",

@@ -110,6 +110,10 @@ const RazerProducts = {
     0x0090: {
         name: 'Razer Naga v2 Pro Wireless',
         transactionId: 0x1f
+    },
+    0x00a6: {
+        name: 'Razer Viper V2 Pro',
+        transactionId: 0x1f
     }
 };
 

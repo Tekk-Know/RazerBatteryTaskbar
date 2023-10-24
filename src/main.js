@@ -114,7 +114,15 @@ const RazerProducts = {
     0x00a6: {
         name: 'Razer Viper V2 Pro',
         transactionId: 0x1f
-    }
+    },
+    0x007b: {
+        name: 'Razer Viper Ultimate',
+        transactionId: 0x3f
+    },
+    0x007a: {
+        name: 'Razer Viper Ultimate Dongle',
+        transactionId: 0x3f
+    },
 };
 
 function GetMessage(mouse) {

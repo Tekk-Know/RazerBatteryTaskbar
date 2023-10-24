@@ -14,6 +14,7 @@ Much of this code is adapted from other works, credit below:
 * DeathAdder V2 X Hyperspeed
 * DeathAdder V3 Pro
 * HyperPolling Wireless Dongle
+* Viper Ultimate 
 
 ## Transaction IDs
 * https://github.com/openrazer/openrazer/blob/master/driver/razermouse_driver.c

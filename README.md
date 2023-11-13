@@ -15,6 +15,7 @@ Much of this code is adapted from other works, credit below:
 * DeathAdder V3 Pro
 * HyperPolling Wireless Dongle
 * Viper Ultimate 
+* Mouse Dock Pro
 
 ## Transaction IDs
 * https://github.com/openrazer/openrazer/blob/master/driver/razermouse_driver.c

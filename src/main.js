@@ -59,6 +59,10 @@ function QuitClick() {
 // mouse stuff
 const RazerVendorId = 0x1532;
 const RazerProducts = {
+    0x00A4: {
+        name: 'Razer Mouse Dock Pro',
+        transactionId: 0x1f
+    },
     0x00AA: {
         name: 'Razer Basilisk V3 Pro',
         transactionId: 0x1f

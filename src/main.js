@@ -132,7 +132,7 @@ const RazerProducts = {
         transactionId: 0x3f
     },
     0x0528: {
-        name: 'Razer Blackshark V2 Pro RZ04-03220',
+        name: 'Razer Blackshark V2 Pro RZ04-0322',
         transactionId: 0x3f
     },
 };

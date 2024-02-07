@@ -16,6 +16,8 @@ Much of this code is adapted from other works, credit below:
 * HyperPolling Wireless Dongle
 * Viper Ultimate 
 * Mouse Dock Pro
+* BlackShark V2 Pro RZ04-0322 (2020 Version)
+* BlackShark V2 Pro RZ04-0453 (2023 Version)
 
 ## Transaction IDs
 * https://github.com/openrazer/openrazer/blob/master/driver/razermouse_driver.c

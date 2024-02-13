@@ -127,6 +127,14 @@ const RazerProducts = {
         name: 'Razer Viper Ultimate Dongle',
         transactionId: 0x3f
     },
+    0x0555: {
+        name: 'Razer Blackshark V2 Pro RZ04-0453',
+        transactionId: 0x3f
+    },
+    0x0528: {
+        name: 'Razer Blackshark V2 Pro RZ04-0322',
+        transactionId: 0x3f
+    },
 };
 
 function GetMessage(mouse) {

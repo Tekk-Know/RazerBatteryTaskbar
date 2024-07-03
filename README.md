@@ -20,4 +20,4 @@ Much of this code is adapted from other works, credit below:
 * BlackShark V2 Pro RZ04-0453 (2023 Version)
 
 ## Transaction IDs
-* https://github.com/openrazer/openrazer/blob/master/driver/razermouse_driver.c
+* https://github.com/openrazer/openrazer/blob/1c36fb458af31fdf7c1d84897e2107aad5ba7669/driver/razermouse_driver.c#L1168

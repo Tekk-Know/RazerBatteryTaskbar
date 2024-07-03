@@ -64,11 +64,15 @@ const RazerProducts = {
         transactionId: 0x1f
     },
     0x00AA: {
-        name: 'Razer Basilisk V3 Pro',
+        name: 'Razer Basilisk V3 Pro Wired',
         transactionId: 0x1f
     },
     0x00AB: {
-        name: 'Razer Basilisk V3 Pro',
+        name: 'Razer Basilisk V3 Pro Wireless',
+        transactionId: 0x1f
+    },
+    0x00B9: {
+        name: 'Razer Basilisk V3 X HyperSpeed',
         transactionId: 0x1f
     },
     0x007C: {
@@ -115,8 +119,12 @@ const RazerProducts = {
         name: 'Razer Naga v2 Pro Wireless',
         transactionId: 0x1f
     },
+    0x00a5: {
+        name: 'Razer Viper V2 Pro Wired',
+        transactionId: 0x1f
+    },
     0x00a6: {
-        name: 'Razer Viper V2 Pro',
+        name: 'Razer Viper V2 Pro Wireless',
         transactionId: 0x1f
     },
     0x007b: {
@@ -139,7 +147,7 @@ const RazerProducts = {
 
 function GetMessage(mouse) {
     // Function that creates and returns the message to be sent to the device
-    let msg = Buffer.from([0x00, mouse.transactionId, 0x00, 0x00, 0x00, 0x02, 0x07, 0x80]);
+    let msg = Buffer.from([0x00, mouse.transactionId || 0xFF, 0x00, 0x00, 0x00, 0x02, 0x07, 0x80]);
     let crc = 0;
 
     for (let i = 2; i < msg.length; i++) {

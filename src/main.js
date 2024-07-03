@@ -128,7 +128,11 @@ const RazerProducts = {
         transactionId: 0x1f
     },
     0x007b: {
-        name: 'Razer Viper Ultimate',
+        name: 'Razer Viper Ultimate Wired',
+        transactionId: 0x3f
+    },
+    0x0078: {
+        name: 'Razer Viper Ultimate Wireless',
         transactionId: 0x3f
     },
     0x007a: {

@@ -151,7 +151,7 @@ const RazerProducts = {
 
 function GetMessage(mouse) {
     // Function that creates and returns the message to be sent to the device
-    let msg = Buffer.from([0x00, mouse.transactionId || 0xFF, 0x00, 0x00, 0x00, 0x02, 0x07, 0x80]);
+    let msg = Buffer.from([0x00, mouse.transactionId, 0x00, 0x00, 0x00, 0x02, 0x07, 0x80]);
     let crc = 0;
 
     for (let i = 2; i < msg.length; i++) {

@@ -1,6 +1,8 @@
-var {
-    WebUSB
-} = require('usb');
+'use strict'
+var { usb, getDeviceList } = require('usb');
+const { bmRequestType, DIRECTION, TYPE, RECIPIENT } = require('bmrequesttype');
+var razerProducts = require('./products');
+
 const {
     app,
     Tray,
@@ -14,6 +16,8 @@ const path = require('path');
 const rootPath = app.getAppPath();
 let tray;
 let batteryCheckInterval;
+const razerVendorId = 0x1532;
+const batteryCheckTimeout = 30000 //in ms;
 
 app.whenReady().then(() => {
     const icon = nativeImage.createFromPath(path.join(rootPath, 'src/assets/battery_0.png'));
@@ -25,15 +29,24 @@ app.whenReady().then(() => {
 
     batteryCheckInterval = setInterval(() => {
         SetTrayDetails(tray);
-    }, 30000);
+    }, batteryCheckTimeout);
 
     SetTrayDetails(tray);
 
     tray.setContextMenu(contextMenu);
     tray.setToolTip('Searching for device');
     tray.setTitle('Razer battery life');
-})
 
+    const devices = getDeviceList();
+    
+    const razerDevices = devices.filter(d => d.deviceDescriptor.idVendor == razerVendorId)
+
+    let deviceStr = '';
+    for (const d of razerDevices) {
+        deviceStr += `vid: ${d.deviceDescriptor.idVendor} | pid: ${d.deviceDescriptor.idProduct} | name: ${razerProducts[d.deviceDescriptor.idProduct]?razerProducts[d.deviceDescriptor.idProduct].name:'unknown'} \n`
+    }
+    new Notification({title: 'Info', body: deviceStr}).show()
+});
 function SetTrayDetails(tray) {
     GetBattery().then(battLife => {
         if (battLife === 0 || battLife === undefined) return;
@@ -43,112 +56,16 @@ function SetTrayDetails(tray) {
         tray.setImage(nativeImage.createFromPath(path.join(rootPath, assetPath)));
         tray.setToolTip(battLife == 0 ? "Device disconnected" : battLife + '%');
     });
-}
-
+};
 function GetBatteryIconPath(val) {
     let iconName;
     iconName = Math.floor(val/10) * 10;
     return `src/assets/battery_${iconName}.png`;
-}
-
+};
 function QuitClick() {
     clearInterval(batteryCheckInterval);
     if (process.platform !== 'darwin') app.quit();
 };
-
-// mouse stuff
-const RazerVendorId = 0x1532;
-const RazerProducts = {
-    0x00A4: {
-        name: 'Razer Mouse Dock Pro',
-        transactionId: 0x1f
-    },
-    0x00AA: {
-        name: 'Razer Basilisk V3 Pro Wired',
-        transactionId: 0x1f
-    },
-    0x00AB: {
-        name: 'Razer Basilisk V3 Pro Wireless',
-        transactionId: 0x1f
-    },
-    0x00B9: {
-        name: 'Razer Basilisk V3 X HyperSpeed',
-        transactionId: 0x1f
-    },
-    0x007C: {
-        name: "Razer DeathAdder V2 Pro Wired",
-        transactionId: 0x3f
-    },
-    0x007D: {
-        name: "Razer DeathAdder V2 Pro Wireless",
-        transactionId: 0x3f
-    },
-    0x009C: {
-        name: "Razer DeathAdder V2 X HyperSpeed",
-        transactionId: 0x1f
-    },
-    0x00B3: {
-        name: 'Razer Hyperpolling Wireless Dongle',
-        transactionId: 0x1f
-    },
-    0x00B6: {
-        name: 'Razer Deathadder V3 Pro Wired',
-        transactionId: 0x1f
-    },
-    0x00B7: {
-        name: 'Razer Deathadder V3 Pro Wireless',
-        transactionId: 0x1f
-    },
-    0x0083: {
-        name: "Razer Basilsk X HyperSpeed",
-        transactionId: 0x1f
-    },
-    0x0086: {
-        name: "Razer Basilisk Ultimate",
-        transactionId: 0x1f
-    },
-    0x0088: {
-        name: "Razer Basilisk Ultimate Dongle",
-        transactionId: 0x1f
-    },
-    0x008F: {
-        name: 'Razer Naga v2 Pro Wired',
-        transactionId: 0x1f
-    },
-    0x0090: {
-        name: 'Razer Naga v2 Pro Wireless',
-        transactionId: 0x1f
-    },
-    0x00a5: {
-        name: 'Razer Viper V2 Pro Wired',
-        transactionId: 0x1f
-    },
-    0x00a6: {
-        name: 'Razer Viper V2 Pro Wireless',
-        transactionId: 0x1f
-    },
-    0x007b: {
-        name: 'Razer Viper Ultimate Wired',
-        transactionId: 0x3f
-    },
-    0x0078: {
-        name: 'Razer Viper Ultimate Wireless',
-        transactionId: 0x3f
-    },
-    0x007a: {
-        name: 'Razer Viper Ultimate Dongle',
-        transactionId: 0x3f
-    },
-    0x0555: {
-        name: 'Razer Blackshark V2 Pro RZ04-0453',
-        transactionId: 0x3f
-    },
-    0x0528: {
-        name: 'Razer Blackshark V2 Pro RZ04-0322',
-        transactionId: 0x3f
-    },
-};
-
 function GetMessage(mouse) {
     // Function that creates and returns the message to be sent to the device
     let msg = Buffer.from([0x00, mouse.transactionId, 0x00, 0x00, 0x00, 0x02, 0x07, 0x80]);
@@ -166,61 +83,52 @@ function GetMessage(mouse) {
 
     return msg;
 };
-async function GetMouse() {
-    const customWebUSB = new WebUSB({
-        // This function can return a promise which allows a UI to be displayed if required
-        devicesFound: devices => {
-            // let dStr = devices.reduce((acc, d) => acc += `${d.productId}||${d.productName}\r\n`,'')
-            // new Notification({title: 'Info', body: dStr}).show()
-            return devices.find(device => RazerVendorId && RazerProducts[device.productId] != undefined)
-        }
-    });
+function GetMouse() {
+    const devices = getDeviceList();
+    
+    const razerDevices = devices.filter(d => d.deviceDescriptor.idVendor == razerVendorId)
 
-    // Returns device based on injected 'devicesFound' function
-    const device = await customWebUSB.requestDevice({
-        filters: [{}]
-    })
-
-    if (device) {
-        return device;
+    if (razerDevices && razerDevices.length > 0) {
+        return razerDevices[0];
     } else {
         throw new Error('No Razer device found on system');
     }
 };
 async function GetBattery() {
-    try {
-        const mouse = await GetMouse();
+    return new Promise(async res => {
+        try {
+            const mouse = GetMouse();
 
-        const msg = GetMessage(mouse);
+            const msg = GetMessage(razerProducts[mouse.deviceDescriptor.idProduct]);
 
-        await mouse.open();
+            mouse.open();
 
-        if (mouse.configuration === null) {
-            await mouse.selectConfiguration(1)
+            if (mouse.configDescriptor.bConfigurationValue === null) {
+                mouse.setConfiguration(1)
+            }
+
+            mouse.interfaces[0].claim();
+
+            mouse.controlTransfer(
+                bmRequestType(DIRECTION.Out, TYPE.Class, RECIPIENT.Interface),
+                0x09, 0x300, 0x00, msg
+            )
+
+            await new Promise(res => setTimeout(res, 1000)); 
+
+            mouse.controlTransfer(
+                bmRequestType(DIRECTION.In, TYPE.Class, RECIPIENT.Interface),
+                0x01, 0x300, 0x00, 90,
+                (err, data) => {
+                    if (err) {
+                        console.error('Error during control transfer:', err);
+                    } else {
+                        return res((data.readUInt8(9) / 255 * 100).toFixed(1));
+                    }
+                }
+            )
+        } catch (error) {
+            console.error(error);
         }
-
-        await mouse.claimInterface(mouse.configuration.interfaces[0].interfaceNumber);
-
-        const request = await mouse.controlTransferOut({
-            requestType: 'class',
-            recipient: 'interface',
-            request: 0x09,
-            value: 0x300,
-            index: 0x00
-        }, msg)
-
-        await new Promise(res => setTimeout(res, 500));
-
-        const reply = await mouse.controlTransferIn({
-            requestType: 'class',
-            recipient: 'interface',
-            request: 0x01,
-            value: 0x300,
-            index: 0x00
-        }, 90)
-
-        return (reply.data.getUint8(9) / 255 * 100).toFixed(1);
-    } catch (error) {
-        console.error(error);
-    }
-};
+    })
+}

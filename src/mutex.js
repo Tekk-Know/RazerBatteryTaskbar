@@ -21,6 +21,7 @@ if (!isWin){
         closeMutexHandle: function (mutexHandle) {
         },
     }
+    return;
 }
 
 // Load the shared library

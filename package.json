@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
+    "koffi": "^2.8.11",
     "usb": "^2.6.0"
   },
   "devDependencies": {

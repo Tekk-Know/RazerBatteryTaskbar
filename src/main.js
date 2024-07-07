@@ -10,10 +10,13 @@ const {
 } = require('electron');
 if (require('electron-squirrel-startup')) app.quit();
 
+const mutex = require('./mutex.js');
+
 const path = require('path');
 const rootPath = app.getAppPath();
 let tray;
 let batteryCheckInterval;
+let mutexHandle;
 
 app.whenReady().then(() => {
     const icon = nativeImage.createFromPath(path.join(rootPath, 'src/assets/battery_0.png'));
@@ -22,6 +25,9 @@ app.whenReady().then(() => {
     const contextMenu = Menu.buildFromTemplate([
         { label: 'Quit', type: 'normal', click: QuitClick }
     ]);
+
+    const mutexName = 'Global\\RazerLinkReadWriteGuardMutex';
+    mutexHandle = mutex.createNamedMutex(mutexName);
 
     batteryCheckInterval = setInterval(() => {
         SetTrayDetails(tray);
@@ -32,6 +38,10 @@ app.whenReady().then(() => {
     tray.setContextMenu(contextMenu);
     tray.setToolTip('Searching for device');
     tray.setTitle('Razer battery life');
+
+    tray.on("double-click", () => {
+        SetTrayDetails(tray);
+    })
 })
 
 function SetTrayDetails(tray) {
@@ -53,6 +63,10 @@ function GetBatteryIconPath(val) {
 
 function QuitClick() {
     clearInterval(batteryCheckInterval);
+
+    mutex.closeMutexHandle(mutexHandle);
+    console.log('Mutex handle closed');
+
     if (process.platform !== 'darwin') app.quit();
 };
 
@@ -187,8 +201,30 @@ async function GetMouse() {
         throw new Error('No Razer device found on system');
     }
 };
+
 async function GetBattery() {
     try {
+        console.log('Mutex created');
+
+        mutex.acquireMutex(mutexHandle);
+        console.log('Mutex acquired');
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Perform your protected operation here
+        return await GetBatteryLocked();
+    } catch (error) {
+        console.error(error);
+    } finally {
+        if (mutexHandle) {
+            mutex.releaseMutex(mutexHandle);
+            console.log('Mutex released');
+        }
+    }
+}
+
+async function GetBatteryLocked() {
+    try{
         const mouse = await GetMouse();
 
         const msg = GetMessage(mouse);
@@ -223,4 +259,4 @@ async function GetBattery() {
     } catch (error) {
         console.error(error);
     }
-};
+}

@@ -1,4 +1,5 @@
 'use strict'
+const logger = require('./logger');
 var { usb, getDeviceList } = require('usb');
 const { bmRequestType, DIRECTION, TYPE, RECIPIENT } = require('bmrequesttype');
 var razerProducts = require('./products');
@@ -14,12 +15,13 @@ if (require('electron-squirrel-startup')) app.quit();
 
 const path = require('path');
 const rootPath = app.getAppPath();
-let tray;
-let batteryCheckInterval;
 const razerVendorId = 0x1532;
 const batteryCheckTimeout = 30000 //in ms;
+let usbDevices, razerDevices, tray, batteryCheckInterval;
 
 app.whenReady().then(() => {
+    onInit();
+
     const icon = nativeImage.createFromPath(path.join(rootPath, 'src/assets/battery_0.png'));
     tray = new Tray(icon);
 
@@ -36,26 +38,36 @@ app.whenReady().then(() => {
     tray.setContextMenu(contextMenu);
     tray.setToolTip('Searching for device');
     tray.setTitle('Razer battery life');
-
-    const devices = getDeviceList();
-    
-    const razerDevices = devices.filter(d => d.deviceDescriptor.idVendor == razerVendorId)
-
-    let deviceStr = '';
-    for (const d of razerDevices) {
-        deviceStr += `vid: ${d.deviceDescriptor.idVendor} | pid: ${d.deviceDescriptor.idProduct} | name: ${razerProducts[d.deviceDescriptor.idProduct]?razerProducts[d.deviceDescriptor.idProduct].name:'unknown'} \n`
-    }
-    new Notification({title: 'Info', body: deviceStr}).show()
 });
+function onInit() {
+    logger.info({checkInterval: batteryCheckTimeout},'App Start');
+
+    usbDevices = getDeviceList() || [];
+
+    razerDevices = usbDevices.filter(d => d.deviceDescriptor.idVendor == razerVendorId);
+    logger.info(`Found ${usbDevices.length} USB device(s) and ${razerDevices.length} Razer product(s)`);
+
+    if (razerDevices.length < 1) {
+        logger.warn('No Razer products detected on init');
+        new Notification({title: 'Warning', body:'No Razer products detected'}).show();
+    }
+    if (razerDevices.length > 1) {
+        //TODO device select
+    }
+};
 function SetTrayDetails(tray) {
-    GetBattery().then(battLife => {
-        if (battLife === 0 || battLife === undefined) return;
+    GetBattery()
+        .then(battLife => {
+            if (battLife === 0 || battLife === undefined) return;
 
-        let assetPath = GetBatteryIconPath(battLife);
+            let assetPath = GetBatteryIconPath(battLife);
 
-        tray.setImage(nativeImage.createFromPath(path.join(rootPath, assetPath)));
-        tray.setToolTip(battLife == 0 ? "Device disconnected" : battLife + '%');
-    });
+            tray.setImage(nativeImage.createFromPath(path.join(rootPath, assetPath)));
+            tray.setToolTip(battLife == 0 ? "Device disconnected" : battLife + '%');
+        })
+        .catch(err => {
+            logger.error(err);
+        });
 };
 function GetBatteryIconPath(val) {
     let iconName;
@@ -67,6 +79,8 @@ function QuitClick() {
     if (process.platform !== 'darwin') app.quit();
 };
 function GetMessage(mouse) {
+    logger.info({target: mouse.name, fn: 'GetMessage'})
+
     // Function that creates and returns the message to be sent to the device
     let msg = Buffer.from([0x00, mouse.transactionId, 0x00, 0x00, 0x00, 0x02, 0x07, 0x80]);
     let crc = 0;
@@ -84,22 +98,24 @@ function GetMessage(mouse) {
     return msg;
 };
 function GetMouse() {
-    const devices = getDeviceList();
+    usbDevices = getDeviceList();
     
-    const razerDevices = devices.filter(d => d.deviceDescriptor.idVendor == razerVendorId)
+    razerDevices = usbDevices.filter(d => d.deviceDescriptor.idVendor == razerVendorId)
 
     if (razerDevices && razerDevices.length > 0) {
+        logger.info(`Sending to: ${razerProducts[razerDevices[0].deviceDescriptor.idProduct].name}`);
         return razerDevices[0];
     } else {
-        throw new Error('No Razer device found on system');
+        throw new Error('No Razer products detected');
     }
 };
 async function GetBattery() {
-    return new Promise(async res => {
+    logger.info('Getting Battery Life');
+    return new Promise(async (res, reject) => {
         try {
             const mouse = GetMouse();
-
-            const msg = GetMessage(razerProducts[mouse.deviceDescriptor.idProduct]);
+            const razerProduct = razerProducts[mouse.deviceDescriptor.idProduct];
+            const msg = GetMessage(razerProduct);
 
             mouse.open();
 
@@ -128,7 +144,7 @@ async function GetBattery() {
                 }
             )
         } catch (error) {
-            console.error(error);
+            return reject(error);
         }
     })
-}
+};

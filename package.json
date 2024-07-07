@@ -13,6 +13,8 @@
   "dependencies": {
     "bmrequesttype": "^0.0.5",
     "electron-squirrel-startup": "^1.0.0",
+    "logrotate-stream": "^0.2.9",
+    "pino": "^9.2.0",
     "usb": "^2.6.0"
   },
   "devDependencies": {

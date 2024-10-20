@@ -147,6 +147,14 @@ const RazerProducts = {
         name: 'Razer Blackshark V2 Pro RZ04-0322',
         transactionId: 0x3f
     },
+    0x00af: {
+        name: 'Razer Cobra Pro Wired',
+        transactionId: 0x1f
+    },
+    0x00b0: {
+        name: 'Razer Cobra Pro Wireless',
+        transactionId: 0x1f
+    },
 };
 
 function GetMessage(mouse) {
